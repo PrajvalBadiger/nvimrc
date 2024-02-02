@@ -29,10 +29,11 @@ return {
                 "lua_ls",
                 "rust_analyzer",
                 "tsserver",
+                "clangd",
+                "arduino_language_server",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
-
                     require("lspconfig")[server_name].setup {
                         capabilities = capabilities
                     }
@@ -46,11 +47,59 @@ return {
                             Lua = {
                                 diagnostics = {
                                     globals = { "vim", "it", "describe", "before_each", "after_each" },
-                                }
+                                },
+                                hint = { enable = true },
+
                             }
                         }
                     }
                 end,
+
+                ["tsserver"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.tsserver.setup {
+                        capabilities = capabilities,
+                        settings = {
+                            javascript = {
+                                inlayHints = {
+                                    includeInlayEnumMemberValueHints = true,
+                                    includeInlayFunctionLikeReturnTypeHints = true,
+                                    includeInlayFunctionParameterTypeHints = true,
+                                    includeInlayParameterNameHints = 'all',
+                                    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                                    includeInlayPropertyDeclarationTypeHints = true,
+                                    includeInlayVariableTypeHints = true,
+                                },
+                            },
+                            typescript = {
+                                inlayHints = {
+                                    includeInlayEnumMemberValueHints = true,
+                                    includeInlayFunctionLikeReturnTypeHints = true,
+                                    includeInlayFunctionParameterTypeHints = true,
+                                    includeInlayParameterNameHints = 'all',
+                                    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                                    includeInlayPropertyDeclarationTypeHints = true,
+                                    includeInlayVariableTypeHints = true,
+                                },
+                            },
+                        }
+                    }
+                end,
+
+                ["rust_analyzer"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.rust_analyzer.setup {
+                        capabilities = capabilities,
+                        settings = {
+                            Rust = {
+                                hint = { enable = true },
+                            }
+                        }
+
+                    }
+                end
+
+
             }
         })
 
@@ -77,7 +126,7 @@ return {
         })
 
         vim.diagnostic.config({
-            -- update_in_insert = true,
+            update_in_insert = false,
             float = {
                 focusable = false,
                 style = "minimal",

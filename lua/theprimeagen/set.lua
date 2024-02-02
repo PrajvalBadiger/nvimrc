@@ -1,32 +1,46 @@
-vim.opt.guicursor = ""
-
-vim.opt.nu = true
-vim.opt.relativenumber = true
-
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
-
-vim.opt.smartindent = true
-
-vim.opt.wrap = false
-
-vim.opt.swapfile = false
-vim.opt.backup = false
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
-vim.opt.undofile = true
-
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
-
-vim.opt.termguicolors = true
-
-vim.opt.scrolloff = 8
-vim.opt.signcolumn = "yes"
+vim.g.mapleader = " "
 vim.opt.isfname:append("@-@")
 
-vim.opt.updatetime = 50
+local options = {
+    nu = true,
+    rnu = true,
 
-vim.opt.colorcolumn = "80"
+    tabstop = 4,
+    shiftwidth = 4,
+    softtabstop = 4,
+    expandtab = true,
+    smartindent = true,
+
+    wrap = false,
+
+    swapfile = false,
+    backup = false,
+    undofile = true,
+    undodir = os.getenv("HOME") .. "/.vim/undodir",
+
+    hlsearch = false,
+    incsearch = true,
+
+    termguicolors = true,
+    scrolloff = 8,
+
+    signcolumn = "auto",
+
+    updatetime = 50,
+
+    splitright = true,
+    splitbelow = true,
+    cursorline = false,
+    laststatus = 3,
+
+    list = false,
+    mouse = "a",
+    autoread = true,
+    --  guicursor = ""
+    --  colorcolumn = "80",
+}
+
+for k, v in pairs(options) do
+    vim.opt[k] = v
+end
 
