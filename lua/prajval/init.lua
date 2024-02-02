@@ -1,7 +1,7 @@
-require("theprimeagen.set")
-require("theprimeagen.remap")
+require("prajval.set")
+require("prajval.remap")
 
-require("theprimeagen.lazy_init")
+require("prajval.lazy_init")
 
 -- DO.not
 -- DO NOT INCLUDE THIS
