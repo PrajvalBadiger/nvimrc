@@ -1,6 +1,5 @@
 
 return {
-    {
         "L3MON4D3/LuaSnip",
         -- follow latest release.
         version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
@@ -8,7 +7,7 @@ return {
         build = "make install_jsregexp",
 
         dependencies = { "rafamadriz/friendly-snippets" },
-
+        event = "InsertEnter",
         config = function()
             local ls = require("luasnip")
             ls.filetype_extend("javascript", { "jsdoc" })
@@ -25,6 +24,5 @@ return {
                 end
             end, {silent = true})
         end,
-    }
 }
 

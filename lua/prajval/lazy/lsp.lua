@@ -49,63 +49,34 @@ return {
                                     globals = { "vim", "it", "describe", "before_each", "after_each" },
                                 },
                                 hint = { enable = true },
-
                             }
                         }
                     }
                 end,
-
-                ["tsserver"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.tsserver.setup {
-                        capabilities = capabilities,
-                        settings = {
-                            javascript = {
-                                inlayHints = {
-                                    includeInlayEnumMemberValueHints = true,
-                                    includeInlayFunctionLikeReturnTypeHints = true,
-                                    includeInlayFunctionParameterTypeHints = true,
-                                    includeInlayParameterNameHints = 'all',
-                                    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-                                    includeInlayPropertyDeclarationTypeHints = true,
-                                    includeInlayVariableTypeHints = true,
-                                },
-                            },
-                            typescript = {
-                                inlayHints = {
-                                    includeInlayEnumMemberValueHints = true,
-                                    includeInlayFunctionLikeReturnTypeHints = true,
-                                    includeInlayFunctionParameterTypeHints = true,
-                                    includeInlayParameterNameHints = 'all',
-                                    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-                                    includeInlayPropertyDeclarationTypeHints = true,
-                                    includeInlayVariableTypeHints = true,
-                                },
-                            },
-                        }
-                    }
-                end,
-
-                ["rust_analyzer"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.rust_analyzer.setup {
-                        capabilities = capabilities,
-                        settings = {
-                            Rust = {
-                                hint = { enable = true },
-                            }
-                        }
-
-                    }
-                end
-
 
             }
         })
 
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
+        local ls = require('luasnip')
+        vim.keymap.set({ "i", "s" }, "<c-j>", function()
+            if ls.expand_or_jumpable() then
+                ls.expand_or_jump()
+            end
+        end, { silent = true })
+
+        vim.keymap.set({ "i", "s" }, "<c-k>", function()
+            if ls.jumpable(-1) then
+                ls.jump(-1)
+            end
+        end, { silent = true })
+
         cmp.setup({
+            window = {
+                completion = cmp.config.window.bordered(),
+                documentation = cmp.config.window.bordered(),
+            },
             snippet = {
                 expand = function(args)
                     require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
@@ -118,8 +89,10 @@ return {
                 ["<C-Space>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' }, -- For luasnip users.
+                { name = 'luasnip',  priority = 40 }, -- For luasnip users.
+                { name = 'nvim_lsp', priority = 30 },
+                { name = 'buffer',   priority = 20 },
+                { name = 'path',     priority = 10 },
             }, {
                 { name = 'buffer' },
             })

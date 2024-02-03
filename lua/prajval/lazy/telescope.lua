@@ -1,3 +1,4 @@
+local builtin = require('telescope.builtin')
 return {
     "nvim-telescope/telescope.nvim",
 
@@ -7,6 +8,34 @@ return {
         "nvim-lua/plenary.nvim"
     },
 
+    keys = {
+        { '<leader>pf', builtin.find_files, { desc = 'Find Files' } },
+        { '<C-p>',      builtin.git_files,  { desc = 'Git files' } },
+        { '<leader>vh', builtin.help_tags,  {} },
+        {
+            '<leader>pws',
+            function()
+                local word = vim.fn.expand("<cword>")
+                builtin.grep_string({ search = word })
+            end
+        },
+        {
+            '<leader>pWs',
+            function()
+                local word = vim.fn.expand("<cWORD>")
+                builtin.grep_string({ search = word })
+            end
+        },
+        {
+            '<leader>ps',
+            function()
+                builtin.grep_string({ search = vim.fn.input("Grep > ") })
+            end,
+            { desc = 'Builtin grep' }
+        },
+    },
+
+    lazy = true,
     config = function()
         require('telescope').setup({
             defaults = {
@@ -46,21 +75,5 @@ return {
                 scroll_strategy = "cycle",
             },
         })
-
-        local builtin = require('telescope.builtin')
-        vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = 'Find Files' })
-        vim.keymap.set('n', '<C-p>', builtin.git_files, { desc = 'Git files' })
-        vim.keymap.set('n', '<leader>pws', function()
-            local word = vim.fn.expand("<cword>")
-            builtin.grep_string({ search = word })
-        end)
-        vim.keymap.set('n', '<leader>pWs', function()
-            local word = vim.fn.expand("<cWORD>")
-            builtin.grep_string({ search = word })
-        end)
-        vim.keymap.set('n', '<leader>ps', function()
-            builtin.grep_string({ search = vim.fn.input("Grep > ") })
-        end, { desc = 'Builtin grep' })
-        vim.keymap.set('n', '<leader>vh', builtin.help_tags, {})
     end
 }
