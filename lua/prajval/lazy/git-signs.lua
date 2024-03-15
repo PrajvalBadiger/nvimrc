@@ -5,6 +5,9 @@ return {
         end
 
         require('gitsigns').setup {
+            signs = {
+                untracked    = { text = '' },
+            },
             on_attach                    = on_attach,
             signcolumn                   = true,  -- Toggle with `:Gitsigns toggle_signs`
             numhl                        = true,  -- Toggle with `:Gitsigns toggle_numhl`

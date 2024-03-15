@@ -31,6 +31,8 @@ return {
                 "clangd",
                 "gopls",
                 "templ",
+                "html",
+                "emmet_language_server",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
@@ -53,7 +55,30 @@ return {
                         }
                     }
                 end,
-
+                ["html"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.html.setup {
+                        capabilities = capabilities,
+                    }
+                end,
+                ["templ"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.tsserver.setup {
+                        capabilities = capabilities,
+                    }
+                end,
+                ["cssls"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.cssls.setup {
+                        capabilities = capabilities,
+                    }
+                end,
+                ["emmet_language_server"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.emmet_language_server.setup {
+                        capabilities = capabilities,
+                    }
+                end,
             }
         })
 
