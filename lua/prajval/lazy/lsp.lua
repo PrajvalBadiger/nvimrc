@@ -1,29 +1,46 @@
 return {
     "neovim/nvim-lspconfig",
     dependencies = {
-        "williamboman/mason.nvim",
-        "williamboman/mason-lspconfig.nvim",
-        "hrsh7th/cmp-nvim-lsp",
-        "hrsh7th/cmp-buffer",
-        "hrsh7th/cmp-path",
-        "hrsh7th/cmp-cmdline",
-        "hrsh7th/nvim-cmp",
-        "L3MON4D3/LuaSnip",
-        "saadparwaiz1/cmp_luasnip",
-        "j-hui/fidget.nvim",
+        { "williamboman/mason.nvim",          config = true },
+        { "hrsh7th/nvim-cmp" },
+        { "hrsh7th/cmp-nvim-lsp" },
+        { "j-hui/fidget.nvim",                config = true },
+        { "williamboman/mason-lspconfig.nvim" },
     },
+    event = "BufReadPre",
 
+    opts = {
+        diagnostics = {
+            underline = true,
+            update_in_insert = false,
+            virtual_text = {
+                spacing = 4,
+                source = "if_many",
+                prefix = "●",
+            },
+            severity_sort = true,
+        },
+    },
     config = function()
-        local cmp = require('cmp')
-        local cmp_lsp = require("cmp_nvim_lsp")
-        local capabilities = vim.tbl_deep_extend(
-            "force",
-            {},
-            vim.lsp.protocol.make_client_capabilities(),
-            cmp_lsp.default_capabilities())
+        local lspconfig = require("lspconfig")
+        local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+        capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-        require("fidget").setup({})
-        require("mason").setup()
+        local on_attach = function()
+            local bufopts = { noremap = true, silent = true, buffer = 0 }
+            vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+            vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
+            vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, bufopts)
+            vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, bufopts)
+            vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, bufopts)
+            vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, bufopts)
+            vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, bufopts)
+            vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, bufopts)
+            vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, bufopts)
+            vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, bufopts)
+        end
+
         require("mason-lspconfig").setup({
             ensure_installed = {
                 "lua_ls",
@@ -36,13 +53,13 @@ return {
             },
             handlers = {
                 function(server_name) -- default handler (optional)
-                    require("lspconfig")[server_name].setup {
-                        capabilities = capabilities
+                    lspconfig[server_name].setup {
+                        capabilities = capabilities,
+                        on_attach = on_attach,
                     }
                 end,
 
                 ["lua_ls"] = function()
-                    local lspconfig = require("lspconfig")
                     lspconfig.lua_ls.setup {
                         capabilities = capabilities,
                         settings = {
@@ -55,84 +72,15 @@ return {
                         }
                     }
                 end,
-                ["html"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.html.setup {
-                        capabilities = capabilities,
-                    }
-                end,
-                ["templ"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.tsserver.setup {
-                        capabilities = capabilities,
-                    }
-                end,
-                ["cssls"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.cssls.setup {
-                        capabilities = capabilities,
-                    }
-                end,
+
                 ["emmet_language_server"] = function()
-                    local lspconfig = require("lspconfig")
                     lspconfig.emmet_language_server.setup {
                         capabilities = capabilities,
+                        on_attach = on_attach,
+                        filetypes = { "html", "css", "template", "javascript", "templ" },
                     }
                 end,
             }
         })
-
-        local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
-        local ls = require('luasnip')
-        vim.keymap.set({ "i", "s" }, "<c-j>", function()
-            if ls.expand_or_jumpable() then
-                ls.expand_or_jump()
-            end
-        end, { silent = true })
-
-        vim.keymap.set({ "i", "s" }, "<c-k>", function()
-            if ls.jumpable(-1) then
-                ls.jump(-1)
-            end
-        end, { silent = true })
-
-        cmp.setup({
-            window = {
-                completion = cmp.config.window.bordered(),
-                documentation = cmp.config.window.bordered(),
-            },
-            snippet = {
-                expand = function(args)
-                    require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-                end,
-            },
-            mapping = cmp.mapping.preset.insert({
-                ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-                ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-                ["<C-Space>"] = cmp.mapping.complete(),
-            }),
-            sources = cmp.config.sources({
-                { name = 'luasnip',  priority = 40 }, -- For luasnip users.
-                { name = 'nvim_lsp', priority = 30 },
-                { name = 'buffer',   priority = 20 },
-                { name = 'path',     priority = 10 },
-            }, {
-                { name = 'buffer' },
-            })
-        })
-
-        vim.diagnostic.config({
-            update_in_insert = false,
-            float = {
-                focusable = false,
-                style = "minimal",
-                border = "rounded",
-                source = "always",
-                header = "",
-                prefix = "",
-            },
-        })
-    end
+    end,
 }
