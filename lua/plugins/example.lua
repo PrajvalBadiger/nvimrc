@@ -16,7 +16,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "tokyonight",
+      colorscheme = "tokyonight-night",
     },
   },
 
@@ -36,37 +36,17 @@ return {
     opts = {
       ensure_installed = {
         "bash",
-        "html",
-        "javascript",
-        "json",
         "lua",
         "markdown",
         "markdown_inline",
         "python",
-        "query",
         "regex",
-        "tsx",
-        "typescript",
         "vim",
         "yaml",
       },
     },
   },
 
-  {
-    "nvim-lualine/lualine.nvim",
-    enabled = false,
-    event = "VeryLazy",
-    opts = function()
-      return {
-        options = {
-            icons_enabled = true,
-            component_separators = { left = '', right = '' },
-            section_separators = { left = '', right = '' },
-        }
-      }
-    end,
-  },
 
   -- add any tools you want to have installed below
   {
@@ -79,8 +59,4 @@ return {
       },
     },
   },
-    {
-        'echasnovski/mini.statusline', version = '*',
-        config = true,
-    },
 }
