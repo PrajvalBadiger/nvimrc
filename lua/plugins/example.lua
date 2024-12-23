@@ -9,11 +9,6 @@
 -- -- * disable/enabled LazyVim plugins
 -- -- * override the configuration of LazyVim plugins
 return {
-  -- disable fzf
-  {
-    "ibhagwan/fzf-lua",
-    enabled = false,
-  },
   -- add gruvbox
   { "ellisonleao/gruvbox.nvim" },
 
@@ -30,16 +25,6 @@ return {
     "folke/trouble.nvim",
     -- opts will be merged with the parent spec
     opts = { use_diagnostic_signs = true },
-  },
-
-  -- override nvim-cmp and add cmp-emoji
-  {
-    "hrsh7th/nvim-cmp",
-    dependencies = { "hrsh7th/cmp-emoji" },
-    ---@param opts cmp.ConfigSchema
-    opts = function(_, opts)
-      table.insert(opts.sources, { name = "emoji" })
-    end,
   },
 
   -- lsp
@@ -70,16 +55,18 @@ return {
 
   {
     "nvim-lualine/lualine.nvim",
+    enabled = false,
     event = "VeryLazy",
     opts = function()
       return {
-        --[[add your custom lualine config here]]
+        options = {
+            icons_enabled = true,
+            component_separators = { left = '', right = '' },
+            section_separators = { left = '', right = '' },
+        }
       }
     end,
   },
-
-  -- use mini.starter instead of alpha
-  -- { import = "lazyvim.plugins.extras.ui.mini-starter" },
 
   -- add any tools you want to have installed below
   {
@@ -92,4 +79,8 @@ return {
       },
     },
   },
+    {
+        'echasnovski/mini.statusline', version = '*',
+        config = true,
+    },
 }
