@@ -6,13 +6,70 @@ return {
     opts = {
         bigfile = { enabled = true },
         dashboard = {
+            preset = {
+
+                keys = {
+                    {
+                        icon = " ",
+                        key = "f",
+                        desc = "Find File",
+                        action = ":lua require('telescope.builtin').find_files()",
+                    },
+                    { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+                    {
+                        icon = " ",
+                        key = "g",
+                        desc = "Find Text",
+                        action = ":lua require('telescope.builtin').live_grep()",
+                    },
+                    {
+                        icon = " ",
+                        key = "r",
+                        desc = "Recent Files",
+                        action = ":lua require('telescope.builtin').oldfiles()",
+                    },
+                    {
+                        icon = " ",
+                        key = "c",
+                        desc = "Config",
+                        action = ":lua require('telescope.builtin').find_files({cwd = vim.fn.stdpath('config')})",
+                    },
+                    { icon = " ", key = "s", desc = "Restore Session", section = "session" },
+                    {
+                        icon = "󰒲 ",
+                        key = "l",
+                        desc = "Lazy",
+                        action = ":Lazy",
+                        enabled = package.loaded.lazy ~= nil,
+                    },
+                    { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+                },
+            },
             enabled = true,
             sections = {
                 { section = "header" },
                 { icon = " ", title = "Keymaps", section = "keys", indent = 2, padding = 1 },
-                { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
-                { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
-                { section = "startup" },
+                {
+                    icon = " ",
+                    title = "Projects",
+                    section = "projects",
+                    height = 2,
+                    indent = 2,
+                    padding = 1,
+                },
+                {
+                    section = "terminal",
+                    icon = " ",
+                    title = "Git Status",
+                    enabled = function()
+                        return Snacks.git.get_root() ~= nil
+                    end,
+                    cmd = "git --no-pager diff --stat-width=98 --stat-count=7 -B -M -C",
+                    height = 6,
+                    indent = 2,
+                    padding = 1,
+                },
+                { section = "startup", padding = 2 },
             },
         },
         notifier = {
